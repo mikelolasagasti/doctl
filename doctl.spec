@@ -16,7 +16,7 @@ The official command line interface for the DigitalOcean API}
 %global godocs          CONTRIBUTING.md CHANGELOG.md README.md
 
 Name:           doctl
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        The official command line interface for the DigitalOcean API
 
 # Upstream license specification: Apache-2.0
@@ -70,12 +70,21 @@ BuildRequires:  golang(k8s.io/client-go/kubernetes/scheme)
 
 %build
 
-%gobuild -o %{gobuilddir}/cmd/doctl %{goipath}/cmd/doctl
+%gobuild -o %{gobuilddir}/cmd/%{name} %{goipath}/cmd/%{name}
+
+%{gobuilddir}/cmd/%{name} completion bash > %{name}.bash
+%{gobuilddir}/cmd/%{name} completion fish > %{name}.fish
+%{gobuilddir}/cmd/%{name} completion zsh  > %{name}.zsh
 
 %install
 %gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/cmd/* %{buildroot}%{_bindir}/
+
+install -Dp %{name}.bash %{buildroot}%{_datadir}/bash-completion/completions/%{name}
+install -Dp %{name}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/%{name}.fish
+install -Dp %{name}.zsh  %{buildroot}%{_datadir}/zsh/site-functions/_%{name}
+
 
 %if %{with check}
 %check
@@ -86,10 +95,22 @@ install -m 0755 -vp %{gobuilddir}/cmd/* %{buildroot}%{_bindir}/
 %license LICENSE.txt
 %doc CONTRIBUTING.md CHANGELOG.md README.md
 %{_bindir}/*
+%dir %{_datadir}/bash-completion
+%dir %{_datadir}/bash-completion/completions
+%{_datadir}/bash-completion/completions/%{name}
+%dir %{_datadir}/fish
+%dir %{_datadir}/fish/vendor_completions.d
+%{_datadir}/fish/vendor_completions.d/%{name}.fish
+%dir %{_datadir}/zsh
+%dir %{_datadir}/zsh/site-functions
+%{_datadir}/zsh/site-functions/_%{name}
 
 %gopkgfiles
 
 %changelog
+* Sun Sep 05 2021 Mikel Olasagasti Uranga <mikel@olasagasti.info> - 1.64.0-2
+- Add bash, fish and zsh completions
+
 * Fri Sep 03 2021 Mikel Olasagasti Uranga <mikel@olasagasti.info> - 1.64.0-1
 - Initial package
 
