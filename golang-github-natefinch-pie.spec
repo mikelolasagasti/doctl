@@ -8,7 +8,7 @@ Version:                1.0
 %gometa
 
 %global common_description %{expand:
-A toolkit for creating plugins for Go applications.}
+A toolkit for creating plugins for Go applications}
 
 %global golicenses      LICENSE
 %global godocs          examples README.md
